@@ -2,6 +2,7 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const url = require('url');
 
+const isDev = process.env.ELECTRON_START_URL;
 let mainWindow;
 
 function createWindow () {
@@ -9,7 +10,7 @@ function createWindow () {
   mainWindow = new BrowserWindow({width: 800, height: 600})
 
   // and load the index.html of the app.
-  const startUrl = process.env.ELECTRON_START_URL || url.format({
+  const startUrl = isDev || url.format({
     pathname: path.join(__dirname, 'build/index.html'),
     protocol: 'file:',
     slashes: true
@@ -17,8 +18,8 @@ function createWindow () {
   
   mainWindow.loadURL(startUrl);
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // Open / Close the DevTools.
+  isDev ? mainWindow.webContents.openDevTools() : mainWindow.webContents.closeDevTools();
   
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
